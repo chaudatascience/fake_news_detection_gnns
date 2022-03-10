@@ -13,6 +13,7 @@
 
 ## References
 Graph Attention Networks  &ensp; [[Neurips 2017]](https://arxiv.org/abs/1710.10903)
+
 A Generalization of Transformer Networks to Graphs  &ensp; [[AAAI 2021]](https://arxiv.org/abs/2012.09699)
 
 
