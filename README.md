@@ -11,10 +11,14 @@
 |Evaluate the model on different datasets| May 1|
 |Prepare the report and presentation| May 7|
 
+
 ## References
 Graph Attention Networks  &ensp; [[Neurips 2017]](https://arxiv.org/abs/1710.10903)
 
 A Generalization of Transformer Networks to Graphs  &ensp; [[AAAI 2021]](https://arxiv.org/abs/2012.09699)
 
+User Preference-aware Fake News Detection  &ensp; [[SIGIR 2021]](https://arxiv.org/abs/2104.12259) 
+
+Some GNN-based Fake News Detection  &ensp; [[Github]](https://github.com/safe-graph/GNN-FakeNews) 
 
 
