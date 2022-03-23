@@ -1,15 +1,15 @@
 # A GNN-based model for Fake News Detection
 
 ## Timeline
-|Task                                                                         | Deadline      |    
-|-------------------------------------------------------------------------------|--------------------------------|
-|  ~~Literature Search / Get Familiar with paper and code base~~ | ~~March 9~~  |
-| Explore the datasets / Apply Feature Extraction | March 16 |
-| Reimplement the methods in the paper |  April 5 |
-| Hyperparameter tuning |  April 12|
-|Explore the effect of indigenous and exdegenious features | April 20 |
-|Evaluate the model on different datasets| May 1|
-|Prepare the report and presentation| May 7|
+| Task                                                          | Deadline     |    
+|---------------------------------------------------------------|--------------|
+| ~~Literature Search / Get Familiar with paper and code base~~ | ~~March 9~~  |
+| ~~Create abstract classes, interface for the project~~        | ~~March 22~~ |
+| Reimplement GAT from scratch                                  | March 29     |
+| State-of-the-art methods in fake news detections              | April 5      |
+| Run a baseline                                                | April 15     |
+| Evaluate the model on different datasets/improve the model    | May 1        |
+| Prepare the report and presentation                           | May 7        |
 
 
 ## References
