@@ -22,10 +22,10 @@ class GAT(nn.Module):
 
         self.is_final_layer = is_final_layer  # used for choosing equation (5) (if False) or equation (6) (if True)
 
-        ## Attention `a` in equation 3. Instead of using a vector `a` with a shape of 2F',
+        ## Vector `a` in equation 3. Instead of using a vector `a` with a shape of 2F',
         # we split `a` into 2 halves: `a_left` and `a_right`. This is only for implementation purpose
         # i.e., easier to stack vectors to use matrix multiplication.
-        self.a_left = nn.Parameter(torch.Tensor(1, num_heads, out_dim))  # left part of the attention mechanism
+        self.a_left = nn.Parameter(torch.Tensor(1, num_heads, out_dim))  # left part of vector `a`
         self.a_right = nn.Parameter(torch.Tensor(1, num_heads, out_dim))  # the right part
 
         self.leaky_relu = nn.LeakyReLU(negative_slope=0.2)
@@ -52,24 +52,26 @@ class GAT(nn.Module):
 
     def _compute_attention(self, e, mask):
         """
-         Compute attention matrix a which contains a_ij as described in equation (3), page 3
+         Compute attention matrix which contains alpha_ij as described in equation (3), page 3
          :param e: energy matrix containing e_ij in equation (1), shape of (num_heads K, num_nodes N, num_nodes N)
          :param mask: used to mask out the nodes that are not in the neighborhood, shape (num_nodes N, num_nodes N)
-         :return: attention matrix a, shape of (num_heads K, num_nodes N, num_nodes N)
+         :return: attention matrix `attention`, shape of (num_heads K, num_nodes N, num_nodes N)
          """
         ## TODO 2: use self.leaky_relu, mask, and e to get attention matrix a
         raise NotImplementedError("Not implemented yet!")
 
-    def _compute_final_node_features(self, a, x):
+    def _compute_final_node_features(self, attention, x):
         """
         Compute final output features `h_prime` in equation (4)
-        :param a: attention matrix in equation (3), shape (num_heads K, num_nodes N, num_nodes N)
+        :param x: input, shape (num_nodes N, node_dim F)
+        :param attention: attention matrix in equation (3), shape (num_heads K, num_nodes N, num_nodes N)
         :return: (num_nodes N, num_heads K, out_dim F')
         """
         x_encoded = self.W(x).reshape(-1, self.num_heads, self.out_dim)  # shape: (N, K, F')
         x_encoded = self.dropout(x_encoded)  # (N, K, F')
-        # note: we can also cache x_encoded in `_compute_energy()` to avoid re-calculating.
-        h_prime = torch.einsum("knm,mkf->nkf", [a, x_encoded])  # shape (num_nodes N, num_heads K, out_dim F')
+        # note: we can also cache x_encoded in `_compute_energy()` to avoid re-calculating it here.
+
+        h_prime = torch.einsum("knm,mkf->nkf", [attention, x_encoded])  # shape (num_nodes N, num_heads K, out_dim F')
         h_prime = self.elu(h_prime)
         return h_prime
 
@@ -108,11 +110,11 @@ class GAT(nn.Module):
         ## compute energy matrix `e` containing e_ij in the equation (1), page 3
         e = self._compute_energy(x)  # shape of e: (num_heads K, num_nodes N, num_nodes N)
 
-        ## compute attention matrix `a` containing a_ij in the equation (3)
-        a = self._compute_attention(e, mask)   # shape (num_heads K, num_nodes N, num_nodes N)
+        ## compute attention matrix `attention` containing alpha_ij in the equation (3)
+        attention = self._compute_attention(e, mask)   # shape (num_heads K, num_nodes N, num_nodes N)
 
-        ## compute final output features h_prime in equation (4)
-        final_features = self._compute_final_node_features(a, x)  # (num_nodes N, num_heads K, out_dim F')
+        ## compute final output features `h_prime` in equation (4)
+        final_features = self._compute_final_node_features(attention, x)  # (num_nodes N, num_heads K, out_dim F')
 
         # collect features from multi heads
         if self.is_final_layer:  # last layer
