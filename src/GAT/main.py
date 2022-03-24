@@ -82,7 +82,6 @@ def train_cora():
                 "train_range": [0, 140],
                 "val_range": [140, 140 + 500],
                 "test_range": [1708, 1708 + 1000]
-                ## dataset info: https://pytorch-geometric.readthedocs.io/en/latest/notes/introduction.html
             },
         "num_epochs": 1200,
         "weight_decay": 5e-4,
@@ -102,9 +101,9 @@ def train_cora():
 
 def train_citeseer():
     ##  Addition to Cora, we need to test on another dataset (e.g., Citeseer)
-    # to proof our implementation is correct.
+    # to prove our implementation is correct.
 
-    ## TODO 4: Should be the same as `train_cora()` function, only change some arguments
+    ## TODO 4: Should be the same as `train_cora()` function, only change some arguments. Dataset info: https://pytorch-geometric.readthedocs.io/en/latest/notes/introduction.html
     raise NotImplementedError("Not implemented yet!")
 
 if __name__ == '__main__':
