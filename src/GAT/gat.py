@@ -60,13 +60,16 @@ class GAT(nn.Module):
         ## TODO 2: use self.leaky_relu, mask, and e to get attention matrix a
         raise NotImplementedError("Not implemented yet!")
 
-    def _compute_final_node_features(self, a):
+    def _compute_final_node_features(self, a, x):
         """
         Compute final output features `h_prime` in equation (4)
         :param a: attention matrix in equation (3), shape (num_heads K, num_nodes N, num_nodes N)
         :return: (num_nodes N, num_heads K, out_dim F')
         """
-        h_prime = torch.einsum("knm,mkf->nkf", [a, self.x_encoded])  # shape (num_nodes N, num_heads K, out_dim F')
+        x_encoded = self.W(x).reshape(-1, self.num_heads, self.out_dim)  # shape: (N, K, F')
+        x_encoded = self.dropout(x_encoded)  # (N, K, F')
+        # note: we can also cache x_encoded in `_compute_energy()` to avoid re-calculating.
+        h_prime = torch.einsum("knm,mkf->nkf", [a, x_encoded])  # shape (num_nodes N, num_heads K, out_dim F')
         h_prime = self.elu(h_prime)
         return h_prime
 
@@ -85,7 +88,7 @@ class GAT(nn.Module):
         :param node_features: updated node features from equation (4), shape  (num_nodes N, num_heads K, out_dim F')
         :return: (num_nodes N, out_dim F'), for the last layer, we use F'=C (#classes)
         """
-        output = torch.mean(node_features, dim=1) # No need softmax() here as it will be used in cross entropy loss
+        output = torch.mean(node_features, dim=1)  # No need softmax() here as it will be used in cross entropy loss
         return output
 
     def forward(self, data):
