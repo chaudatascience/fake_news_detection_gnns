@@ -79,8 +79,8 @@ def train_cora():
             {
                 "dataset_name": "Cora",
                 "accuracy_reported_in_the_paper": 83.0,  # our accuracy should be at least 81%
-                "train_range": [0, 140],
-                "val_range": [140, 140 + 500],
+                "train_range": [0, 140],  # train set contains nodes whose indices from 0 to 140
+                "val_range": [140, 140 + 500], # 500 val nodes: index from 140 to 640
                 "test_range": [1708, 1708 + 1000]
             },
         "num_epochs": 1200,
