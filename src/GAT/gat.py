@@ -111,8 +111,8 @@ class GAT(nn.Module):
         ## compute attention matrix `a` containing a_ij in the equation (3)
         a = self._compute_attention(e, mask)   # shape (num_heads K, num_nodes N, num_nodes N)
 
-        ## compute final output features `output_features` in equation (4)
-        final_features = self._compute_final_node_features(a)  # (num_nodes N, num_heads K, out_dim F')
+        ## compute final output features h_prime in equation (4)
+        final_features = self._compute_final_node_features(a, x)  # (num_nodes N, num_heads K, out_dim F')
 
         # collect features from multi heads
         if self.is_final_layer:  # last layer
