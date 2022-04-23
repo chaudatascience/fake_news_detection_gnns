@@ -1,5 +1,8 @@
 # A GNN-based model for Fake News Detection
 
+Run train.py
+So far the highest val_acc: 0.87
+
 ## Timeline
 | Task                                                          | Deadline     |    
 |---------------------------------------------------------------|--------------|

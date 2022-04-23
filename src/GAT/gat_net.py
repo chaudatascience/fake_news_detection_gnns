@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from typing import List
 
-from gat import GAT
+from .gat import GAT
 
 
 class GATNet(nn.Module):
@@ -13,6 +13,7 @@ class GATNet(nn.Module):
         layer_dims = [node_dim] + layer_dims
         num_heads_list = [1] + num_heads_list
         gat_layers = []
+        ## 2 layers of GAT
         for i in range(len(layer_dims)-1):
             layer = GAT(layer_dims[i] * num_heads_list[i], layer_dims[i+1], num_heads= num_heads_list[i+1],
                         is_final_layer=True if i == len(layer_dims)-2 else False, dropout=dropout)
@@ -20,5 +21,5 @@ class GATNet(nn.Module):
         self.gat_net = nn.Sequential(*gat_layers)
 
     def forward(self, data):
-        output, _ = self.gat_net(data)
+        output, _, _ = self.gat_net(data)
         return output

@@ -3,10 +3,12 @@ import enum
 
 import torch
 from torch import nn
+from torch_geometric.nn import GATConv, GCNConv, SAGEConv, global_max_pool
 
 
 class GAT(nn.Module):
-    def __init__(self, node_dim: int, out_dim: int, num_heads: int, is_final_layer: bool, dropout: float):
+    def __init__(self, node_dim: int, out_dim: int, num_heads: int, 
+                 is_final_layer: bool, dropout: float):
         """
         :param node_dim: F, the number of features in each node
         :param out_dim: F', new node feature dimension
@@ -18,6 +20,7 @@ class GAT(nn.Module):
         self.node_dim = node_dim
         self.out_dim = out_dim
         self.num_heads = num_heads
+        self.num_classes = 2
         self.W = nn.Linear(node_dim, out_dim * num_heads)  # Shared linear transformations
 
         self.is_final_layer = is_final_layer  # used for choosing equation (5) (if False) or equation (6) (if True)
@@ -33,6 +36,8 @@ class GAT(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
         self.dropout = nn.Dropout(dropout)
+        
+        self.linear = nn.Linear(self.num_heads*self.out_dim, self.num_classes)
 
         self._init_params()  # initialize some parameters
 
@@ -44,13 +49,22 @@ class GAT(nn.Module):
     def _compute_energy(self, x):
         """
         Compute matrix e containing e_ij in equation (1), page 3 in the paper
+        Huang: actually equation (3) as equation (1) is not used?
         :param x: node features, shape of (num_nodes N, node_dim F)
         :return: e: shape of (num_heads K, num_nodes N, num_nodes N)
         """
         ## TODO 1: use projection self.W and 2 vectors self.a_left, self.a_right to compute matrix e
-        raise NotImplementedError("Not implemented yet!")
+        ## Edge attention calculation
+        ## Apply the scoring function (* represents element-wise (a.k.a. Hadamard) product)
+        ## shape = (N, NH, FOUT) * (1, NH, FOUT) -> (N, NH, 1) -> (N, NH) because sum squeezes the last dimension
+        x_proj = self.W(x).view(-1, self.num_heads, self.out_dim)
+        x_proj = self.dropout(x_proj)  # in the official GAT imp they did dropout here as well
+        score_source = (x_proj*self.a_left).sum(dim=-1, keepdim=True)
+        score_target = (x_proj*self.a_right).sum(dim=-1, keepdim=True)
+        
+        return score_source, score_target
 
-    def _compute_attention(self, e, mask):
+    def _compute_attention(self, x, mask):
         """
          Compute attention matrix which contains alpha_ij as described in equation (3), page 3
          :param e: energy matrix containing e_ij in equation (1), shape of (num_heads K, num_nodes N, num_nodes N)
@@ -58,7 +72,38 @@ class GAT(nn.Module):
          :return: attention matrix `attention`, shape of (num_heads K, num_nodes N, num_nodes N)
          """
         ## TODO 2: use self.leaky_relu, mask, and e to get attention matrix a
-        raise NotImplementedError("Not implemented yet!")
+        
+        x_proj = self.W(x).view(-1, self.num_heads, self.out_dim)
+        x_proj = self.dropout(x_proj)  # in the official GAT imp they did dropout here as well
+        score_source = (x_proj*self.a_left).sum(dim=-1)  ## (N, num_heads, 1)
+        score_target = (x_proj*self.a_right).sum(dim=-1)
+        
+        ## aij: (score_source[i]+score_target[j])/(score_source[i]+score_source[i1]+score_source[i]+score_source[i2])
+        # score_source = self.leaky_relu(score_source)
+        # score_target = self.leaky_relu(score_target)
+        # score_source -= score_target.max()  ## numerical stability
+        # score_target -= score_target.max()
+        # score_source = torch.exp(score_source)
+        # score_target = torch.exp(score_target)  ## softmax
+        
+        ## to simplify calculation
+        ## score[i, j] = score_source[i]+score_target[j]
+        # score = score_source.reshape(-1, 1, self.num_heads)+score_target.reshape(1, -1, self.num_heads)
+        score = score_source.unsqueeze(1)+score_target.unsqueeze(0)
+        score = self.leaky_relu(score)
+        score = (score-score.mean())/score.std()  ## numerical stability
+        score = torch.exp(score)
+        mask2 = mask.reshape(len(mask), len(mask), -1)
+        denominator = (score*mask2).sum(1, keepdim=True)  ## append mask with num_heads dim, sum over dim 1
+        # denominator = score.sum(1, keepdim=True)  ## append mask with num_heads dim, sum over dim 1
+        
+        aij = score/denominator  ## it can be greater than 1 as aij might be greater than aik+ail+aim
+        aij = aij*mask2
+        # aij = self.dropout(aij)
+        aij = torch.permute(aij, (2, 0, 1))
+        
+        ## keep only j belong to Ni
+        return aij
 
     def _compute_final_node_features(self, attention, x):
         """
@@ -82,7 +127,8 @@ class GAT(nn.Module):
         :return: output. We just need to reshape to 2-D: (num_nodes N, num_heads K * out_dim F')
         """
         ## TODO 3: use self.elu, then reshape to return the ouput
-        raise NotImplementedError("Not implemented yet!")
+        node_features = node_features.reshape(node_features.shape[0], -1)
+        return node_features
 
     def _average_multi_head_features(self, node_features):
         """
@@ -102,24 +148,28 @@ class GAT(nn.Module):
         ## unpack data
         # x: node features, shape (num_nodes N, node_dim F)
         # mask: bool 2D-tensor,  mask = adjacency_matrix + identity_matrix; shape (num_nodes, num_nodes)
-        x, mask = data
+        x, mask, batch = data
 
         ## apply dropout to the input
         x = self.dropout(x)
 
         ## compute energy matrix `e` containing e_ij in the equation (1), page 3
-        e = self._compute_energy(x)  # shape of e: (num_heads K, num_nodes N, num_nodes N)
+        ## Huang: I don't think paper use e
+        # e = self._compute_energy(x)  # shape of e: (num_heads K, num_nodes N, num_nodes N)
 
         ## compute attention matrix `attention` containing alpha_ij in the equation (3)
-        attention = self._compute_attention(e, mask)   # shape (num_heads K, num_nodes N, num_nodes N)
-
+        attention = self._compute_attention(x, mask)   # shape (num_heads K, num_nodes N, num_nodes N)
+        
         ## compute final output features `h_prime` in equation (4)
+        ## you also need mask to do aggregate over node
         final_features = self._compute_final_node_features(attention, x)  # (num_nodes N, num_heads K, out_dim F')
 
         # collect features from multi heads
-        if self.is_final_layer:  # last layer
-            output = self._average_multi_head_features(final_features)  # eq (6), (num_nodes N, out_dim F')
-        else:  # intermediate layer
+        if not self.is_final_layer: # # intermediate layer  
             output = self._concat_multi_head_features(final_features)  #eq (5), (num_nodes N, num_heads K * out_dim F')
-
-        return output, mask  ## in addition to output, we return mask for the next layer
+        else:  ## last layer
+            output = self._average_multi_head_features(final_features)  # eq (6), (num_nodes N, out_dim F')
+            output = global_max_pool(output, batch)  ## final classification
+            # output = output.log_softmax(dim=-1)
+            
+        return output, mask, batch  ## in addition to output, we return mask for the next layer
