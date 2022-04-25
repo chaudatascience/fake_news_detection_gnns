@@ -1,5 +1,4 @@
 ## paper Graph Attention Networks - https://arxiv.org/abs/1710.10903
-import enum
 
 import torch
 from torch import nn
@@ -111,15 +110,15 @@ class GAT(nn.Module):
         e = self._compute_energy(x)  # shape of e: (num_heads K, num_nodes N, num_nodes N)
 
         ## compute attention matrix `attention` containing alpha_ij in the equation (3)
-        attention = self._compute_attention(e, mask)   # shape (num_heads K, num_nodes N, num_nodes N)
+        attention = self._compute_attention(e, mask)  # shape (num_heads K, num_nodes N, num_nodes N)
 
         ## compute final output features `h_prime` in equation (4)
         final_features = self._compute_final_node_features(attention, x)  # (num_nodes N, num_heads K, out_dim F')
 
-        # collect features from multi heads
+        ## collect features from multi heads
         if self.is_final_layer:  # last layer
             output = self._average_multi_head_features(final_features)  # eq (6), (num_nodes N, out_dim F')
         else:  # intermediate layer
-            output = self._concat_multi_head_features(final_features)  #eq (5), (num_nodes N, num_heads K * out_dim F')
+            output = self._concat_multi_head_features(final_features)  # eq (5), (num_nodes N, num_heads K * out_dim F')
 
         return output, mask  ## in addition to output, we return mask for the next layer
