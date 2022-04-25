@@ -32,28 +32,34 @@ class FakeNewsNet(torch.nn.Module):
         self.gats = ModuleList(gat_layers)
 
         # Readout
-        self.lin_news = Linear(in_dim, hidden_dims[-1])
-        self.lin0 = Linear(hidden_dims[-1], hidden_dims[-1])
-        self.lin1 = Linear(2 * hidden_dims[-1], out_dim)
+        self.linear_news = Linear(in_dim, hidden_dims[-1])
+        self.linear_readout = Linear(hidden_dims[-1], hidden_dims[-1])
+        self.linear_concat = Linear(2 * hidden_dims[-1], out_dim)
 
     def forward(self, x, edge_index, batch):
+        """
+        :param x: input node features, shape (X, feature_dim), feature_dim=310 in case of "content" feature)
+        :param edge_index: list of edges in the graphs
+        :param batch: shape (X,), contains number from 0 -> batch_size-1 to indicate which node belongs to which graph in batch
+        :return:
+        """
         # Message passing using GATs
         h = x
         for gat in self.gats:
             h = gat(h, edge_index).relu()
 
-        # Pooling
-        h = self.pooling(h, batch)
+        # Pooling: reduce all nodes in a graph into 1 node
+        h = self.pooling(h, batch)  ## (batch_size, hid_dim)
 
         # Readout
-        h = self.lin0(h).relu()
+        h = self.linear_readout(h).relu()
 
         # get root node for each graph
         root = (batch[1:] - batch[:-1]).nonzero(as_tuple=False).view(-1)
-        root = torch.cat([root.new_zeros(1), root + 1], dim=0) # list of indices
-        news = x[root]
-        news = self.lin_news(news).relu()
+        root = torch.cat([root.new_zeros(1), root + 1], dim=0)  # list of indices
+        news = x[root]  # shape (batch_size, feature_dim)
+        news = self.linear_news(news).relu()
 
         # Concat raw word2vec embeddings of news and readout from the graph
-        out = self.lin1(torch.cat([h, news], dim=-1))
+        out = self.linear_concat(torch.cat([h, news], dim=-1))
         return torch.sigmoid(out)
