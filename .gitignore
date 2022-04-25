@@ -181,4 +181,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-/src/fake_news/
+/src/fake_news/gossipcop
+/src/fake_news/politifact

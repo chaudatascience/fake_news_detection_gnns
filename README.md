@@ -1,5 +1,10 @@
 # A GNN-based model for Fake News Detection
 
+```
+python src/fake_news/fake_news_detection.py
+```
+
+
 ## Timeline
 | Task                                                          | Deadline     |    
 |---------------------------------------------------------------|--------------|
