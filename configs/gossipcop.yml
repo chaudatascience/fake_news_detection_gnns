@@ -1,0 +1,18 @@
+## Use [] for hyper-parameter tuning
+dataset: 'gossipcop'
+early_stopping: 50
+cuda: 'auto'
+batch: 128
+lr: 0.001
+weight_decay: 0.01
+epochs: 300
+dropout: [0, 0.2]
+pooling: ['global_max_pool', 'global_mean_pool']
+gat_layer: ['GATConv', 'GATv2Conv', 'SuperGATConv']
+hid_dims: [ [128], [128, 128],  [128, 128, 128]  ]
+readout_dim: [ 64, 128]
+news_dim: [ 64, 128]
+num_heads: [1, 2]
+save_name: None
+feature: 'content'
+

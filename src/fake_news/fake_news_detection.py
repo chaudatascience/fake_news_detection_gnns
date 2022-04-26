@@ -88,7 +88,7 @@ def train_model(config: Dict, logger: ExperimentLog):
 if __name__ == '__main__':
     # config = parse_argparse_config()
 
-    with open("../../configs/config.yml", "r") as f:
+    with open("../../configs/gossipcop.yml", "r") as f:
         main_config = yaml.safe_load(f)
 
     config_list = get_hyperpram_grid_configs(main_config)
