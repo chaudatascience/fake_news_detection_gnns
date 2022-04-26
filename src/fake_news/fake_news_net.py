@@ -28,7 +28,7 @@ class FakeNewsNet(torch.nn.Module):
             raise ValueError(f"{pooling} is not valid! expected 'global_mean_pool' or 'global_max_pool'")
 
         # Graph Attention Networks
-        gat_dims = list(zip([in_dim] + hidden_dims[:-1], hidden_dims, [num_heads] * (len(hidden_dims))))
+        gat_dims = list(zip([in_dim] + [h*num_heads for h in hidden_dims[:-1]], hidden_dims, [num_heads] * (len(hidden_dims))))
         gat_layers = [GNN(in_d, out_d, heads, dropout=dropout) for in_d, out_d, heads in gat_dims]
         self.gats = ModuleList(gat_layers)
 

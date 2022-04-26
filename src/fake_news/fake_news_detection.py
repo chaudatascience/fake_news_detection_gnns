@@ -1,3 +1,4 @@
+import argparse
 import os
 import time
 from collections import namedtuple
@@ -89,7 +90,13 @@ def train_model(config: Dict, logger: ExperimentLog):
 if __name__ == '__main__':
     # config = parse_argparse_config()
 
-    with open("../../configs/gossipcop.yml", "r") as f:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default="num_heads",
+                        help="name of the yaml config file (in `configs` folder)")
+    args = parser.parse_args()
+
+    print(args.config)
+    with open(f"configs/{args.config}.yml", "r") as f:
         main_config = yaml.safe_load(f)
 
     config_list = get_hyperpram_grid_configs(main_config)

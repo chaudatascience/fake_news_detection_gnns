@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from typing import List
 
-from gat import GAT
+from src.GAT.gat import GAT
 
 
 class GATNet(nn.Module):

@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/chau/my_work/research/GNN_fake_news_detection/fake_news_detection_gnns/mlruns/1/f098e21b4387420a817a0821239d9912/artifacts
+end_time: 1651005810837
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: f098e21b4387420a817a0821239d9912
+run_uuid: f098e21b4387420a817a0821239d9912
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1651005809622
+status: 3
+tags: []
+user_id: chau

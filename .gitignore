@@ -186,3 +186,5 @@ cython_debug/
 /src/fake_news/logs/
 /src/fake_news/mlruns/
 /src/fake_news/gossipcop/
+/gossipcop/
+/politifact/

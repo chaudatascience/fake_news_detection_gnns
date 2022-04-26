@@ -1,4 +1,5 @@
 ## paper Graph Attention Networks - https://arxiv.org/abs/1710.10903
+import enum
 
 import torch
 from torch import nn
@@ -21,10 +22,10 @@ class GAT(nn.Module):
 
         self.is_final_layer = is_final_layer  # used for choosing equation (5) (if False) or equation (6) (if True)
 
-        ## Vector `a` in equation 3. Instead of using a vector `a` with a shape of 2F',
+        ## Attention `a` in equation 3. Instead of using a vector `a` with a shape of 2F',
         # we split `a` into 2 halves: `a_left` and `a_right`. This is only for implementation purpose
         # i.e., easier to stack vectors to use matrix multiplication.
-        self.a_left = nn.Parameter(torch.Tensor(1, num_heads, out_dim))  # left part of vector `a`
+        self.a_left = nn.Parameter(torch.Tensor(1, num_heads, out_dim))  # left part of the attention mechanism
         self.a_right = nn.Parameter(torch.Tensor(1, num_heads, out_dim))  # the right part
 
         self.leaky_relu = nn.LeakyReLU(negative_slope=0.2)
@@ -33,6 +34,7 @@ class GAT(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
 
+        self.x_encoded = None  # cache for calculating h_prime in equation (4), (5), (6)
         self._init_params()  # initialize some parameters
 
     def _init_params(self):
@@ -42,46 +44,48 @@ class GAT(nn.Module):
 
     def _compute_energy(self, x):
         """
-        Compute matrix e containing e_ij in equation (1), page 3 in the paper
-        :param x: node features, shape of (num_nodes N, node_dim F)
+        Compute matrix e containing e_ij in equation (1)
+        :param x: input, shape of (num_nodes N, node_dim F)
         :return: e: shape of (num_heads K, num_nodes N, num_nodes N)
-        """
-        ## TODO 1: use projection self.W and 2 vectors self.a_left, self.a_right to compute matrix e
-        raise NotImplementedError("Not implemented yet!")
-
-    def _compute_attention(self, e, mask):
-        """
-         Compute attention matrix which contains alpha_ij as described in equation (3), page 3
-         :param e: energy matrix containing e_ij in equation (1), shape of (num_heads K, num_nodes N, num_nodes N)
-         :param mask: used to mask out the nodes that are not in the neighborhood, shape (num_nodes N, num_nodes N)
-         :return: attention matrix `attention`, shape of (num_heads K, num_nodes N, num_nodes N)
-         """
-        ## TODO 2: use self.leaky_relu, mask, and e to get attention matrix a
-        raise NotImplementedError("Not implemented yet!")
-
-    def _compute_final_node_features(self, attention, x):
-        """
-        Compute final output features `h_prime` in equation (4)
-        :param x: input, shape (num_nodes N, node_dim F)
-        :param attention: attention matrix in equation (3), shape (num_heads K, num_nodes N, num_nodes N)
-        :return: (num_nodes N, num_heads K, out_dim F')
         """
         x_encoded = self.W(x).reshape(-1, self.num_heads, self.out_dim)  # shape: (N, K, F')
         x_encoded = self.dropout(x_encoded)  # (N, K, F')
-        # note: we can also cache x_encoded in `_compute_energy()` to avoid re-calculating it here.
+        self.x_encoded = x_encoded  # cache x_encoded for later use
+        h_left = torch.einsum("nkf,ikf->kni", [x_encoded, self.a_left])  # (K, 1, N)
+        h_right = torch.einsum("nkf,ikf->kin", [x_encoded, self.a_right])  # (K, N, 1)
+        e = h_left + h_right  # shape (K,N,N)
+        return e
 
-        h_prime = torch.einsum("knm,mkf->nkf", [attention, x_encoded])  # shape (num_nodes N, num_heads K, out_dim F')
+    def _compute_attention(self, e, mask):
+        """
+         Compute matrix a containing a_ij in equation (3)
+         :param e: energy matrix containing e_ij in equation (1), shape  of (num_heads K, num_nodes N, num_nodes N)
+         :param mask: adjacency matrix to mask out the nodes that are not neighbors, shape  (1, num_nodes N, num_nodes N)
+         :return: attention weights, shape  of (num_heads K, num_nodes N, num_nodes N)
+         """
+        e = self.leaky_relu(e)
+        e = e.masked_fill(mask == torch.tensor(False), -float("inf"))
+        a = self.softmax(e)
+        return a
+
+    def _compute_final_node_features(self, a):
+        """
+        Compute final output features `h_prime` in equation (4)
+        :param a: attention matrix in equation (3), shape (num_heads K, num_nodes N, num_nodes N)
+        :return: (num_nodes N, num_heads K, out_dim F')
+        """
+        h_prime = torch.einsum("knm,mkf->nkf", [a, self.x_encoded])  # shape (num_nodes N, num_heads K, out_dim F')
         h_prime = self.elu(h_prime)
         return h_prime
 
     def _concat_multi_head_features(self, node_features):
         """
         concatenate features from all attention heads, equation (5)
-        :param node_features: updated node features from equation (4), shape (num_nodes N, num_heads K, out_dim F')
-        :return: output. We just need to reshape to 2-D: (num_nodes N, num_heads K * out_dim F')
+        :param node_features: updated node features from equation (4), shape  (num_nodes N, num_heads K, out_dim F')
+        :return: just need to reshape to 2-D: (num_nodes N, num_heads K * out_dim F')
         """
-        ## TODO 3: use self.elu, then reshape to return the ouput
-        raise NotImplementedError("Not implemented yet!")
+        output = self.elu(node_features).reshape(-1, self.num_heads * self.out_dim)
+        return output
 
     def _average_multi_head_features(self, node_features):
         """
@@ -89,7 +93,7 @@ class GAT(nn.Module):
         :param node_features: updated node features from equation (4), shape  (num_nodes N, num_heads K, out_dim F')
         :return: (num_nodes N, out_dim F'), for the last layer, we use F'=C (#classes)
         """
-        output = torch.mean(node_features, dim=1)  # No need softmax() here as it will be used in cross entropy loss
+        output = torch.mean(node_features, dim=1) # No need softmax() here as it will be used in cross entropy loss
         return output
 
     def forward(self, data):
@@ -109,16 +113,16 @@ class GAT(nn.Module):
         ## compute energy matrix `e` containing e_ij in the equation (1), page 3
         e = self._compute_energy(x)  # shape of e: (num_heads K, num_nodes N, num_nodes N)
 
-        ## compute attention matrix `attention` containing alpha_ij in the equation (3)
-        attention = self._compute_attention(e, mask)  # shape (num_heads K, num_nodes N, num_nodes N)
+        ## compute attention matrix `a` containing a_ij in the equation (3)
+        a = self._compute_attention(e, mask)   # shape (num_heads K, num_nodes N, num_nodes N)
 
-        ## compute final output features `h_prime` in equation (4)
-        final_features = self._compute_final_node_features(attention, x)  # (num_nodes N, num_heads K, out_dim F')
+        ## compute final output features `output_features` in equation (4)
+        final_features = self._compute_final_node_features(a)  # (num_nodes N, num_heads K, out_dim F')
 
-        ## collect features from multi heads
+        # collect features from multi heads
         if self.is_final_layer:  # last layer
             output = self._average_multi_head_features(final_features)  # eq (6), (num_nodes N, out_dim F')
         else:  # intermediate layer
-            output = self._concat_multi_head_features(final_features)  # eq (5), (num_nodes N, num_heads K * out_dim F')
+            output = self._concat_multi_head_features(final_features)  #eq (5), (num_nodes N, num_heads K * out_dim F')
 
         return output, mask  ## in addition to output, we return mask for the next layer

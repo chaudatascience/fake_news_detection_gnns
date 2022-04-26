@@ -1,0 +1,4 @@
+artifact_location: file:///Users/chau/my_work/research/GNN_fake_news_detection/fake_news_detection_gnns/mlruns/1
+experiment_id: '1'
+lifecycle_stage: active
+name: fake_news
