@@ -18,8 +18,8 @@ import dgl
 from dgl.data import register_data_args
 from dgl.data import CoraGraphDataset, CiteseerGraphDataset, PubmedGraphDataset
 
-from gat import GAT
-from utils import EarlyStopping
+from paper_gat import GAT
+from paper_utils import EarlyStopping
 
 
 def accuracy(logits, labels):
@@ -40,7 +40,6 @@ def evaluate(model, features, labels, mask):
 def main(args):
     # load and preprocess dataset
     if args.dataset == 'cora':
-        
         data = CoraGraphDataset()
     elif args.dataset == 'citeseer':
         data = CiteseerGraphDataset()
@@ -174,6 +173,7 @@ if __name__ == '__main__':
                         help="indicates whether to use early stop or not")
     parser.add_argument('--fastmode', action="store_true", default=False,
                         help="skip re-evaluate the validation set")
+
     args = parser.parse_args()
     print(args)
 
