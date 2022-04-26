@@ -188,3 +188,4 @@ cython_debug/
 /src/fake_news/gossipcop/
 /gossipcop/
 /politifact/
+/mlruns/
