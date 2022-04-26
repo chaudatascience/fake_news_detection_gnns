@@ -95,6 +95,10 @@ if __name__ == '__main__':
 
     print(f"there are total {len(config_list)} config files!")
     for i, config in enumerate(config_list):
+        if i+1!=5:
+            continue
+        else:
+            print(config)
         print(f"running config {i+1}...")
         logger = custom_logs.ExperimentLog({"logger_name": "%Y-%m-%d--%Hh%Mm%Ss.%f",
                                             "logger_path": "logs/{dataset_name}"},

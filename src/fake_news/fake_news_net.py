@@ -34,7 +34,7 @@ class FakeNewsNet(torch.nn.Module):
 
         # Readout
         self.linear_news = Linear(in_dim, news_dim)
-        self.linear_readout = Linear(hidden_dims[-1], readout_dim)
+        self.linear_readout = Linear(hidden_dims[-1]*num_heads, readout_dim)
         self.linear_concat = Linear(news_dim + readout_dim, out_dim)
 
     def forward(self, x, edge_index, batch):
