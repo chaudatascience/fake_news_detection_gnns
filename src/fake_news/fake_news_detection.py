@@ -62,6 +62,7 @@ def train_model(config: Dict, logger: ExperimentLog):
 
         if patience > config.early_stopping:
             logger.info(f"early stopping, best epoch:{epoch - patience}")
+            logger.info(f"final_test_acc: {_final_test_acc}; final_test_f1: {_final_test_f1}")
             break
 
         running_time = (time.time() - start) / 60
@@ -95,10 +96,6 @@ if __name__ == '__main__':
 
     print(f"there are total {len(config_list)} config files!")
     for i, config in enumerate(config_list):
-        if i+1!=5:
-            continue
-        else:
-            print(config)
         print(f"running config {i+1}...")
         logger = custom_logs.ExperimentLog({"logger_name": "%Y-%m-%d--%Hh%Mm%Ss.%f",
                                             "logger_path": "logs/{dataset_name}"},
