@@ -1,9 +1,10 @@
 from typing import List
 
 import torch
+from torch import nn
 from torch.nn import Linear, ModuleList
 from torch_geometric.nn import GATConv, GATv2Conv, SuperGATConv
-from torch_geometric.nn import global_max_pool, global_mean_pool
+from torch_geometric.nn import global_max_pool, global_mean_pool, GlobalAttention
 
 
 class FakeNewsNet(torch.nn.Module):
@@ -24,6 +25,16 @@ class FakeNewsNet(torch.nn.Module):
             self.pooling = global_max_pool
         elif pooling == "global_mean_pool":
             self.pooling = global_mean_pool
+        elif pooling == "global_attention":
+            attention_readout = nn.Sequential(Linear(hidden_dims[-1]*num_heads, 1))
+            self.pooling = GlobalAttention(attention_readout)
+        elif pooling == "global_attention_with_relu":
+            attention_readout = nn.Sequential(Linear(hidden_dims[-1]*num_heads, 1), nn.ReLU())
+            self.pooling = GlobalAttention(attention_readout)
+        elif pooling == "global_attention_with_relu_linear":
+            attention_readout = nn.Sequential(Linear(hidden_dims[-1] * num_heads, 1), nn.ReLU())
+            attention_linear = Linear(hidden_dims[-1] * num_heads, hidden_dims[-1] * num_heads)
+            self.pooling = GlobalAttention(attention_readout, attention_linear)
         else:
             raise ValueError(f"{pooling} is not valid! expected 'global_mean_pool' or 'global_max_pool'")
 
@@ -36,6 +47,8 @@ class FakeNewsNet(torch.nn.Module):
         self.linear_news = Linear(in_dim, news_dim)
         self.linear_readout = Linear(hidden_dims[-1]*num_heads, readout_dim)
         self.linear_concat = Linear(news_dim + readout_dim, out_dim)
+
+
 
     def forward(self, x, edge_index, batch):
         """

@@ -58,6 +58,7 @@ def train_model(config: Dict, logger: ExperimentLog):
             best_val_loss = val_loss
             _final_test_acc = test_acc
             _final_test_f1 = test_f1
+            patience = 0
         else:
             patience += 1
 
@@ -91,7 +92,7 @@ if __name__ == '__main__':
     # config = parse_argparse_config()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, default="num_heads",
+    parser.add_argument('--config', type=str, default="pooling",
                         help="name of the yaml config file (in `configs` folder)")
     args = parser.parse_args()
 

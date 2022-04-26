@@ -7,9 +7,9 @@ lr: 0.001
 weight_decay: 0.01
 epochs: 300
 dropout: 0
-pooling:  ['global_max_pool', 'global_mean_pool', 'global_attention']
+pooling:  'global_attention_with_relu'
 gat_layer: 'GATConv'
-hid_dims: [ [128, 128] ]
+hid_dims: [ [128], [128, 128] ]
 readout_dim: 64
 news_dim: 64
 num_heads: 1

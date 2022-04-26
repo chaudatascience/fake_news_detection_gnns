@@ -9,7 +9,7 @@ epochs: 300
 dropout: 0
 pooling:  ['global_max_pool', 'global_mean_pool', 'global_attention']
 gat_layer: 'GATConv'
-hid_dims: [ [128, 128] ]
+hid_dims: [ [128] ]
 readout_dim: 64
 news_dim: 64
 num_heads: 1

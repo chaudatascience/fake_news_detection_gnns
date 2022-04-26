@@ -120,14 +120,5 @@ def train_cora():
 
     train(cora_config)
 
-
-def train_citeseer():
-    ##  Addition to Cora, we need to test on another dataset (e.g., Citeseer)
-    # to prove our implementation is correct.
-
-    ## TODO 4: Should be the same as `train_cora()` function, only change some arguments. Dataset info: https://pytorch-geometric.readthedocs.io/en/latest/notes/introduction.html
-    raise NotImplementedError("Not implemented yet!")
-
-
 if __name__ == '__main__':
     train_cora()
