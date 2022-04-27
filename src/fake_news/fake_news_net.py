@@ -5,6 +5,8 @@ from torch import nn
 from torch.nn import Linear, ModuleList
 from torch_geometric.nn import GATConv, GATv2Conv, SuperGATConv
 from torch_geometric.nn import global_max_pool, global_mean_pool, GlobalAttention
+from src.GAT.gat_net import GATNet
+from src.GAT.gat_ultils import convert_edge_list_to_mask
 
 
 class FakeNewsNet(torch.nn.Module):
@@ -12,7 +14,10 @@ class FakeNewsNet(torch.nn.Module):
                  num_heads: int, readout_dim: int = None, news_dim: int = None, dropout: int = 0):
         super().__init__()
 
-        if gnn_layer == "GATConv":
+        self.gnn_layer = gnn_layer
+        if gnn_layer == "OurGATNet":
+            GNN = GATNet
+        elif gnn_layer == "GATConv":
             GNN = GATConv
         elif gnn_layer == "GATv2Conv":
             GNN = GATv2Conv
@@ -39,9 +44,19 @@ class FakeNewsNet(torch.nn.Module):
             raise ValueError(f"{pooling} is not valid! expected 'global_mean_pool' or 'global_max_pool'")
 
         # Graph Attention Networks
-        gat_dims = list(zip([in_dim] + [h*num_heads for h in hidden_dims[:-1]], hidden_dims, [num_heads] * (len(hidden_dims))))
-        gat_layers = [GNN(in_d, out_d, heads, dropout=dropout) for in_d, out_d, heads in gat_dims]
-        self.gats = ModuleList(gat_layers)
+        if gnn_layer == "OurGATNet":  # our implementation
+            gat_config =  {
+                'node_dim': in_dim,
+                'num_layers': 2,
+                'layer_dims': [128, 128],
+                'num_heads_list': [1, 1],
+                "dropout": 0.6
+            }
+            self.gats = GATNet(**gat_config)
+        else:
+            gat_dims = list(zip([in_dim] + [h*num_heads for h in hidden_dims[:-1]], hidden_dims, [num_heads] * (len(hidden_dims))))
+            gat_layers = [GNN(in_d, out_d, heads, dropout=dropout) for in_d, out_d, heads in gat_dims]
+            self.gats = ModuleList(gat_layers)
 
         # Readout
         self.linear_news = Linear(in_dim, news_dim)
@@ -58,9 +73,13 @@ class FakeNewsNet(torch.nn.Module):
         :return:
         """
         # Message passing using GATs
-        h = x
-        for gat in self.gats:
-            h = gat(h, edge_index).relu()
+        if self.gnn_layer == "OurGATNet":
+            edge_index_2 = [[s,t] for s, t in zip(edge_index[0], edge_index[1])]
+            h = self.gats((x, convert_edge_list_to_mask(edge_index_2, num_nodes=len(x))))
+        else:
+            h = x
+            for gat in self.gats:
+                h = gat(h, edge_index).relu()
 
         # Pooling: reduce all nodes in a graph into 1 node
         h = self.pooling(h, batch)  ## (batch_size, hid_dim)

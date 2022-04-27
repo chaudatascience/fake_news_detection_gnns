@@ -105,9 +105,9 @@ def train_cora():
                 "val_range": [140, 140 + 500],  # 500 val nodes: index from 140 to 640
                 "test_range": [1708, 1708 + 1000]
             },
-        "num_epochs": 2000,
+        "num_epochs": 200,
         "weight_decay": 5e-4,
-        "lr": 5e-3,
+        "lr": 1e-3,
         "gat_net":
             {
                 'node_dim': cora_node_dim,
