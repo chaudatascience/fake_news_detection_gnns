@@ -1,12 +1,13 @@
 from typing import List
 
 import torch
+import torch_geometric
 from torch import nn
 from torch.nn import Linear, ModuleList
-from torch_geometric.nn import GATConv, GATv2Conv, SuperGATConv
 from torch_geometric.nn import global_max_pool, global_mean_pool, GlobalAttention
-from src.GAT.gat_net import GATNet
+
 from src.GAT.gat import GAT
+from src.GAT.gat_net import GATNet
 from src.GAT.gat_ultils import convert_edge_list_to_mask
 
 
@@ -15,27 +16,23 @@ class FakeNewsNet(torch.nn.Module):
                  num_heads: int, readout_dim: int = None, news_dim: int = None, dropout: int = 0):
         super().__init__()
 
+        assert gnn_layer in ["OurGATNet", "GATConv", "GATv2Conv", "SuperGATConv"]
         self.gnn_layer = gnn_layer
+
         if gnn_layer == "OurGATNet":
             GNN = GAT
-        elif gnn_layer == "GATConv":
-            GNN = GATConv
-        elif gnn_layer == "GATv2Conv":
-            GNN = GATv2Conv
-        elif gnn_layer == "SuperGATConv":
-            GNN = SuperGATConv
         else:
-            raise ValueError(f"{gnn_layer} is not valid! expected one of 'GATConv', 'GATv2Conv', 'SuperGATConv'")
+            GNN = getattr(torch_geometric.nn, gnn_layer)
 
         if pooling == "global_max_pool":
             self.pooling = global_max_pool
         elif pooling == "global_mean_pool":
             self.pooling = global_mean_pool
         elif pooling == "global_attention":
-            attention_readout = nn.Sequential(Linear(hidden_dims[-1]*num_heads, 1))
+            attention_readout = nn.Sequential(Linear(hidden_dims[-1] * num_heads, 1))
             self.pooling = GlobalAttention(attention_readout)
         elif pooling == "global_attention_with_relu":
-            attention_readout = nn.Sequential(Linear(hidden_dims[-1]*num_heads, 1), nn.ReLU())
+            attention_readout = nn.Sequential(Linear(hidden_dims[-1] * num_heads, 1), nn.ReLU())
             self.pooling = GlobalAttention(attention_readout)
         elif pooling == "global_attention_with_relu_linear":
             attention_readout = nn.Sequential(Linear(hidden_dims[-1] * num_heads, 1), nn.ReLU())
@@ -55,16 +52,15 @@ class FakeNewsNet(torch.nn.Module):
             }
             self.gats = GATNet(**gat_config)
         else:
-            gat_dims = list(zip([in_dim] + [h*num_heads for h in hidden_dims[:-1]], hidden_dims, [num_heads] * (len(hidden_dims))))
+            gat_dims = list(zip([in_dim] + [h * num_heads
+                                            for h in hidden_dims[:-1]], hidden_dims, [num_heads] * (len(hidden_dims))))
             gat_layers = [GNN(in_d, out_d, heads, dropout=dropout) for in_d, out_d, heads in gat_dims]
             self.gats = ModuleList(gat_layers)
 
         # Readout
         self.linear_news = Linear(in_dim, news_dim)
-        self.linear_readout = Linear(hidden_dims[-1]*num_heads, readout_dim)
+        self.linear_readout = Linear(hidden_dims[-1] * num_heads, readout_dim)
         self.linear_concat = Linear(news_dim + readout_dim, out_dim)
-
-
 
     def forward(self, x, edge_index, batch):
         """

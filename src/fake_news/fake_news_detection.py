@@ -92,7 +92,7 @@ if __name__ == '__main__':
     # config = parse_argparse_config()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, default="ourGAT",
+    parser.add_argument('--config', type=str, default="pooling2",
                         help="name of the yaml config file (in `configs` folder)")
     args = parser.parse_args()
 
