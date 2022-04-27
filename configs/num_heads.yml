@@ -1,5 +1,5 @@
 ## Use [] for hyper-parameter tuning
-dataset:  ['politifact', 'gossipcop']
+dataset: 'politifact'
 early_stopping: 50
 cuda: 'auto'
 batch: 128
@@ -9,10 +9,10 @@ epochs: 300
 dropout: 0
 pooling: 'global_max_pool'
 gat_layer: 'GATConv'
-hid_dims: [ [128, 128] ]
-readout_dim: 128
-news_dim: 128
-num_heads: [2,3,4,5,6,7,8]
+hid_dims: [ [16 ] ]
+readout_dim: 64
+news_dim: 64
+num_heads:  [6,7,8]
 save_name: None
 feature: 'content'
 
