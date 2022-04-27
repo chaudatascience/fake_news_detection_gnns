@@ -6,6 +6,7 @@ from torch.nn import Linear, ModuleList
 from torch_geometric.nn import GATConv, GATv2Conv, SuperGATConv
 from torch_geometric.nn import global_max_pool, global_mean_pool, GlobalAttention
 from src.GAT.gat_net import GATNet
+from src.GAT.gat import GAT
 from src.GAT.gat_ultils import convert_edge_list_to_mask
 
 
@@ -16,7 +17,7 @@ class FakeNewsNet(torch.nn.Module):
 
         self.gnn_layer = gnn_layer
         if gnn_layer == "OurGATNet":
-            GNN = GATNet
+            GNN = GAT
         elif gnn_layer == "GATConv":
             GNN = GATConv
         elif gnn_layer == "GATv2Conv":
@@ -45,11 +46,11 @@ class FakeNewsNet(torch.nn.Module):
 
         # Graph Attention Networks
         if gnn_layer == "OurGATNet":  # our implementation
-            gat_config =  {
+            gat_config = {
                 'node_dim': in_dim,
-                'num_layers': 2,
-                'layer_dims': [128, 128],
-                'num_heads_list': [1, 1],
+                'num_layers': len(hidden_dims),
+                'layer_dims': hidden_dims,
+                'num_heads_list': [num_heads] * len(hidden_dims),
                 "dropout": 0.6
             }
             self.gats = GATNet(**gat_config)
@@ -74,7 +75,7 @@ class FakeNewsNet(torch.nn.Module):
         """
         # Message passing using GATs
         if self.gnn_layer == "OurGATNet":
-            edge_index_2 = [[s,t] for s, t in zip(edge_index[0], edge_index[1])]
+            edge_index_2 = [[s.item(), t.item()] for s, t in zip(edge_index[0], edge_index[1])]
             h = self.gats((x, convert_edge_list_to_mask(edge_index_2, num_nodes=len(x))))
         else:
             h = x
