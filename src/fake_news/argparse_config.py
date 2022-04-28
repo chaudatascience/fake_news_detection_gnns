@@ -32,11 +32,11 @@ def parse_argparse_config():
                         help="dimensions for graph readout")
     parser.add_argument('--num_heads', type=int, default=1,
                         help="num attention heads for each GAT layer")
-    parser.add_argument('--only_gat', type=bool, default=False,
-                        help="Only use GAT (not use news features)")
     # https://github.com/safe-graph/GNN-FakeNews/issues/13
     parser.add_argument('--feature', type=str, default='content',
                         help="feature type: [profile, spacy, bert, content],`content` means 300-d word2vec+10-d profile")
+    parser.add_argument('--only_gat', type=bool, default=False,
+                        help="Only use GAT (not use news features)")
 
     args = parser.parse_args()
     return args

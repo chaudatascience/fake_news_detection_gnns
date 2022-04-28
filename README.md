@@ -41,7 +41,7 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --e
                     help="one of [global_mean_pool, global_max_pool, global_attention, global_attention_with_relu, global_attention_with_relu_linear]"
 '--gat_layer', type=str, default="GATConv",
                     help="one of ['OurGATNet', GATConv', 'GATv2Conv', 'SuperGATConv']"
-'--hid_dims', type=List[int], default=[128, 128],
+'--hid_dims', type=List[int], default=[32],
                     help="hidden dimensions for GATs"
 '--news_dim', type=int, default=64,
                     help="dimensions for news"
@@ -51,6 +51,8 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --e
                     help="num attention heads for each GAT layer"
 '--feature', type=str, default='content',
                     help="feature type: [profile, spacy, bert, content],`content` means 300-d word2vec+10-d profile"
+'--only_gat',  type=bool, default=False,
+                        help="Only use GAT (testing purpose)"
 ```
 
 For hyper-param tuning, use `hyper_param_tuning()` in [fake_news_detection.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_detection.py) and modify the `yaml` config file. Example of the config file can be found [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/demo.yml).
