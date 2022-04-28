@@ -92,6 +92,9 @@ Train and val losses on <b>Gossipcop</b> dataset
 <br>
 <img src="plots/res_table.png" width="350">
 
+<b>Analyse Results:</b>
+More details of the results (e.g., train and val losses, accuracy by number of attention heads) can be found at this [Jupyter notebooks](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/notebooks/analyse_results.ipynb)
+
 ## Team Members
 [Chau Pham](https://github.com/chaudatascience), [Sheng Huang](https://github.com/ShengH1997), and [Efe Sencan](https://github.com/Efesencan)
 ## References
