@@ -1,21 +1,20 @@
 import argparse
-import os
 import time
 from collections import namedtuple
-
 from typing import Dict
+
 import torch
 import yaml
 from torch_geometric.datasets import UPFD
 from torch_geometric.loader import DataLoader
 from torch_geometric.transforms import ToUndirected
 
+from src import custom_logs
 from src.GAT.gat_ultils import count_parameters
 from src.custom_logs import ExperimentLog
 from src.fake_news.argparse_config import parse_argparse_config
 from src.fake_news.fake_news_net import FakeNewsNet
 from src.utils.fake_news_utils import train, test, get_device, get_hyperpram_grid_configs
-from src import custom_logs
 
 
 def train_model(config: Dict, logger: ExperimentLog):
@@ -69,7 +68,7 @@ def train_model(config: Dict, logger: ExperimentLog):
 
         running_time = (time.time() - start) / 60
         logger.info(f"Epoch: {epoch + 1} | time: {running_time:.2f}[m] | train_loss: {train_loss: .2f} | "
-              f"val_loss: {val_loss:.2f} | val_acc: {val_acc:.2f} | val_f1: {val_f1:.2f}")
+                    f"val_loss: {val_loss:.2f} | val_acc: {val_acc:.2f} | val_f1: {val_f1:.2f}")
 
         train_loss_list.append(train_loss)
         val_acc_list.append(val_acc)
@@ -77,7 +76,7 @@ def train_model(config: Dict, logger: ExperimentLog):
         val_loss_list.append(val_loss)
 
     logger.time_mins = running_time
-    logger.running_epochs = epoch-patience
+    logger.running_epochs = epoch - patience
     logger.final_test_acc = _final_test_acc
     logger.final_test_f1 = _final_test_f1
     logger.train_loss = train_loss_list
@@ -88,11 +87,21 @@ def train_model(config: Dict, logger: ExperimentLog):
     logger.log_all()
     return
 
-if __name__ == '__main__':
-    # config = parse_argparse_config()
 
+def run_experiment(config):
+    logger = custom_logs.ExperimentLog({"logger_name": "%Y-%m-%d--%Hh%Mm%Ss.%f",
+                                        "logger_path": "logs/{dataset_name}"},
+                                       dataset=config["dataset"])
+    logger.info(config)
+    logger.config = config
+    MyConfig = namedtuple('MyConfig', config)
+    config = MyConfig(**config)
+    train_model(config, logger)
+
+
+def hyper_param_tuning():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, default="num_hid_layers",
+    parser.add_argument('--config', type=str, default="demo",
                         help="name of the yaml config file (in `configs` folder)")
     args = parser.parse_args()
 
@@ -101,17 +110,11 @@ if __name__ == '__main__':
         main_config = yaml.safe_load(f)
 
     config_list = get_hyperpram_grid_configs(main_config)
-
-    print(f"there are total {len(config_list)} config files!")
     for i, config in enumerate(config_list):
-        print(f"running config {i+1}...")
-        logger = custom_logs.ExperimentLog({"logger_name": "%Y-%m-%d--%Hh%Mm%Ss.%f",
-                                            "logger_path": "logs/{dataset_name}"},
-                                           dataset=config["dataset"])
-        logger.info(config)
-        logger.config = config
+        print(f"running config {i + 1}...")
+        run_experiment(config)
 
-        MyConfig = namedtuple('MyConfig', config)
-        config = MyConfig(**config)
 
-        train_model(config, logger)
+if __name__ == '__main__':
+    config = vars(parse_argparse_config())
+    run_experiment(config)

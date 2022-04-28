@@ -30,6 +30,7 @@ def test(model, test_loader, loss_fnc, device):
     all_predictions = []
     all_labels = []
     model.eval()
+
     for data in test_loader:
         data = data.to(device)
         out = model(data.x, data.edge_index, data.batch)

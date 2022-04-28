@@ -16,16 +16,14 @@ def parse_argparse_config():
                         help="learning rate")
     parser.add_argument('--weight_decay', type=float, default=0.01,
                         help="weight decay for lr")
-    parser.add_argument('--eval', action='store_true',
-                        help="evaluation mode")
     parser.add_argument('--epochs', type=int, default=300,
                         help="training epochs")
     parser.add_argument('--dropout', type=float, default=0,
                         help="dropout")
     parser.add_argument('--pooling', type=str, default="global_max_pool",
-                        help="global_mean_pool or global_max_pool")
+                        help="one of [global_mean_pool, global_max_pool, global_attention, global_attention_with_relu, global_attention_with_relu_linear]")
     parser.add_argument('--gat_layer', type=str, default="GATConv",
-                        help="one of 'GATConv', 'GATv2Conv', 'SuperGATConv'")
+                        help="one of ['OurGATNet', GATConv', 'GATv2Conv', 'SuperGATConv']")
     parser.add_argument('--hid_dims', type=List[int], default=[128, 128],
                         help="hidden dimensions for GATs")
     parser.add_argument('--news_dim', type=int, default=128,
@@ -34,8 +32,6 @@ def parse_argparse_config():
                         help="dimensions for graph readout")
     parser.add_argument('--num_heads', type=int, default=1,
                         help="num attention heads for each GAT layer")
-    parser.add_argument('--save_name', type=str, default=None,
-                        help="name for saved model")
 
     # https://github.com/safe-graph/GNN-FakeNews/issues/13
     parser.add_argument('--feature', type=str, default='content',
