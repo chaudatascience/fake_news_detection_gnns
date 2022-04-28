@@ -15,7 +15,7 @@ conda activate fake_news
 To reproduce the results: 
 
 ```
-python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --early_stopping 50 --pooling global_attention_with_relu_linear
+python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --early_stopping 50 --batch 128
 ```
 <br>
 
