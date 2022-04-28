@@ -51,7 +51,7 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --e
                     help="num attention heads for each GAT layer"
 '--feature', type=str, default='content',
                     help="feature type: [profile, spacy, bert, content],`content` means 300-d word2vec+10-d profile"
-'--only_gat',  type=bool, default=False,
+'--only_gat', type=bool, default=False,
                         help="Only use GAT (testing purpose)"
 ```
 
