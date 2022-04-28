@@ -51,35 +51,41 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300
                     help="feature type: [profile, spacy, bert, content],`content` means 300-d word2vec+10-d profile"
 ```
 
-# Datasets
-<img src="plots/data_stats.png" width="500">
+# Datasets 
+Dataset from UPFD paper
+
+<img src="plots/data_stats.png" width="350">
 
 <br>
 <br>
 <br>
-<img src="plots/a_graph_in_Gossipcop_dataset.png" width="500" >
+<img src="plots/a_graph_in_Gossipcop_dataset.png" width="300" >
 <br>
 <br>
 <br>
-Train and val losses on **Gossipcop** dataset
+Train and val losses on <b>Gossipcop</b> dataset
 <br>
-<img src="plots/gossipcop_loss.png" width="600">
+<img src="plots/gossipcop_loss.png" width="400">
 
 <br>
 <br>
-**Result table**
+<b>Result table</b>
 <br>
-<img src="plots/res_table.png" width="436">
+<img src="plots/res_table.png" width="350">
 
-
+## Team Members
+[Chau Pham](https://github.com/chaudatascience), [Sheng Huang](https://github.com/ShengH1997), and [Efe Sencan](https://github.com/Efesencan)
 ## References
 
-Graph Attention Networks &ensp; [[ICLR 2018]](https://arxiv.org/abs/1710.10903)
-
-A Generalization of Transformer Networks to Graphs &ensp; [[AAAI 2021]](https://arxiv.org/abs/2012.09699)
-
-User Preference-aware Fake News Detection (UPFD) &ensp; [[SIGIR 2021]](https://arxiv.org/abs/2104.12259)
-
-UPFD Code &ensp; [[Github]](https://github.com/safe-graph/GNN-FakeNews) 
-
-
+| Title                                                                         | Tag                            | Conference   | Links                                                                                                                                                                                                                                                                                                                                    | Notes                                               |
+|-------------------------------------------------------------------------------|--------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| Semi-Supervised Classification with Graph Convolutional Networks              | GCN                            | 2016         | [Paper](https://arxiv.org/abs/1609.02907) &ensp; [Video](https://www.youtube.com/watch?v=VyIOfIglrUM)                                                                                                                                                                                                                                    |                                                     |
+| Inductive Representation Learning on Large Graphs                             | Graph SAGE                     | 2017         | [Paper](https://arxiv.org/abs/1706.02216) &ensp; [Video](https://youtu.be/vinQCnizqDA)                                                                                                                                                                                                                                                   |                                                     |
+| Graph Attention Networks                                                      | GAT                            | 2017         | [Paper](https://arxiv.org/abs/1710.10903) &ensp; [Video](https://youtu.be/vinQCnizqDA)&ensp; [DGLblog](https://www.dgl.ai/blog/2019/02/17/gat.html) &ensp; [MainCode](https://github.com/gordicaleksa/pytorch-GAT)&ensp; [Code2](https://github.com/raunakkmr/Graph-Attention-Networks)&ensp; [Code3](https://github.com/Diego999/pyGAT) |                                                     |
+| A Generalization of Transformer Networks to Graphs                            | Graph Transformers             | 2021         | [Paper](https://arxiv.org/abs/2012.09699)&ensp; [Code](https://github.com/graphdeeplearning/graphtransformer)                                                                                                                                                                                                                            | General form of GAT                                 |
+| Understanding Convolutions on Graphs                                          | GNN tutorials                  | Distill 2021 | [part2](https://distill.pub/2021/understanding-gnns/) &ensp; [part1](https://distill.pub/2021/gnn-intro/)                                                                                                                                                                                                                                |                                                     |
+| Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges         | small book + tutorials on GNNs | 2021         | [Paper](https://arxiv.org/abs/2104.13478) &ensp; [Tutorials](https://geometricdeeplearning.com/lectures/) &ensp; [ICLR2021](https://youtu.be/w6Pw4MOzMuo)  &ensp; [MLStreetTalk](https://www.youtube.com/watch?v=bIZB1hIJ4u8)                                                                                                            |                                                     |
+| Attention is all you need                                                     | Transformer                    | Neurips 2017 | [Paper](https://arxiv.org/abs/1706.03762)  &ensp; [video](https://youtu.be/iDulhoQ2pro)                                                                                                                                                                                                                                                  |                                                     |
+| Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention | Linear Transformer             | ICML 2020    | [Paper](https://arxiv.org/abs/2006.16236)  &ensp; [video](https://youtu.be/hAooAOFRsYc)                                                                                                                                                                                                                                                  | Reduce time complexity O(N^2) to O(N)               |
+| GNN papers + DGL examples                                                     | DGL                            |              | [Tutorials](https://www.dgl.ai/)                                                                                                                                                                                                                                                                                                         |                                                     |
+|User Preference-aware Fake News Detection                                                     | UPFD                           |              | [Paper](https://arxiv.org/abs/2104.12259)     &ensp; [Code](https://github.com/safe-graph/GNN-FakeNews)                                                                                                                                                                                                                                  | datasets, our model was based on this awesome paper |
