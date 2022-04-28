@@ -58,9 +58,9 @@ For hyper-param tuning, use `yaml` config file (for example, [here](https://gith
 Datasets from [UPFD (SIGIR'21)](https://arxiv.org/pdf/2104.12259.pdf) paper.
 
 Fake and Real news on Twitter verified by 
-+  Politifact
++  Politifact:
 Journalists and domain experts review the political news and provide fact-checking evaluation results.
-+ Gossipcop
++ Gossipcop:
 GossipCop provides rating scores on the scale of 0 to 10 to classify a news story. 
 
 
@@ -72,7 +72,7 @@ GossipCop provides rating scores on the scale of 0 to 10 to classify a news stor
 <br>
 
 # Model
-<img src="plots/architecture.png" width="700" >
+<img src="plots/architecture.png" width="750" >
 <br>
 <br>
 
