@@ -1,6 +1,6 @@
 # A GNN-based model for Fake News Detection
 
-<img src="plots/task.png" width="500">
+<img src="plots/task.png" width="650">
 
 # Setup
 
@@ -72,7 +72,7 @@ GossipCop provides rating scores on the scale of 0 to 10 to classify a news stor
 <br>
 
 # Model
-<img src="plots/architecture.png" width="600" >
+<img src="plots/architecture.png" width="700" >
 <br>
 <br>
 
