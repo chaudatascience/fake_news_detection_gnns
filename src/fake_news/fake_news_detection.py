@@ -118,7 +118,7 @@ def hyper_param_tuning():
 
 
 if __name__ == '__main__':
-    # config = vars(parse_argparse_config())
-    # run_experiment(config)
+    config = vars(parse_argparse_config())
+    run_experiment(config)
 
-    hyper_param_tuning()
+    # hyper_param_tuning() ## for hyper-param tuning

@@ -15,5 +15,5 @@ news_dim:  64
 num_heads: 1
 save_name: None
 feature: 'content'
-only_gat: True
+only_gat: False
 
