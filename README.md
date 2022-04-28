@@ -12,9 +12,10 @@ conda activate fake_news
 ```
 
 # Usage
+To reproduce the results: 
 
 ```
-python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 
+python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --early_stopping 50 --pooling global_attention_with_relu_linear
 ```
 <br>
 
@@ -42,9 +43,9 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300
                     help="one of ['OurGATNet', GATConv', 'GATv2Conv', 'SuperGATConv']"
 '--hid_dims', type=List[int], default=[128, 128],
                     help="hidden dimensions for GATs"
-'--news_dim', type=int, default=128,
+'--news_dim', type=int, default=64,
                     help="dimensions for news"
-'--readout_dim', type=int, default=128,
+'--readout_dim', type=int, default=64,
                     help="dimensions for graph readout"
 '--num_heads', type=int, default=1,
                     help="num attention heads for each GAT layer"
@@ -52,7 +53,12 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300
                     help="feature type: [profile, spacy, bert, content],`content` means 300-d word2vec+10-d profile"
 ```
 
-For hyper-param tuning, use `yaml` config file (for example, [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/pooling2.yml))
+For hyper-param tuning, use `hyper_param_tuning()` in [fake_news_detection.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_detection.py) and modify the `yaml` config file. Example of the config file can be found [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/pooling2.yml).
+
+<b>Some important files</b>
+- [fake_news_detection.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_detection.py): Main file for fake news detection
+- [fake_news_net.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_net.py): Fake News Net
+- [GAT package](https://github.com/chaudatascience/fake_news_detection_gnns/tree/main/src/GAT): Our implementation of Graph Attention Networks (GATs)
 
 # Datasets 
 Datasets from [UPFD (SIGIR'21)](https://arxiv.org/pdf/2104.12259.pdf) paper.
@@ -82,7 +88,7 @@ Train and val losses on <b>Gossipcop</b> dataset
 
 <br>
 <br>
-<b>Result table</b>
+<b>Resulting table</b>
 <br>
 <img src="plots/res_table.png" width="350">
 
