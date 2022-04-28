@@ -51,8 +51,10 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300
                     help="feature type: [profile, spacy, bert, content],`content` means 300-d word2vec+10-d profile"
 ```
 
+For hyper-param tuning, use `yaml` config file (for example, [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/demo.yml))
+
 # Datasets 
-Dataset from UPFD paper
+Dataset from [UPFD (SIGIR'21)](https://arxiv.org/pdf/2104.12259.pdf) paper
 
 <img src="plots/data_stats.png" width="350">
 
