@@ -4,7 +4,7 @@ from typing import List
 
 def parse_argparse_config():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', type=str, default="gossipcop",
+    parser.add_argument('--dataset', type=str, default="politifact",
                         help="name of the dataset, either 'gossipcop' or 'politifact' ")
     parser.add_argument('--early_stopping', type=int, default=50,
                         help="stop training after `early_stopping` non-decreasing val loss epochs")
@@ -24,11 +24,11 @@ def parse_argparse_config():
                         help="one of [global_mean_pool, global_max_pool, global_attention, global_attention_with_relu, global_attention_with_relu_linear]")
     parser.add_argument('--gat_layer', type=str, default="GATConv",
                         help="one of ['OurGATNet', GATConv', 'GATv2Conv', 'SuperGATConv']")
-    parser.add_argument('--hid_dims', type=List[int], default=[128, 128],
+    parser.add_argument('--hid_dims', type=List[int], default=[32],
                         help="hidden dimensions for GATs")
-    parser.add_argument('--news_dim', type=int, default=128,
+    parser.add_argument('--news_dim', type=int, default=64,
                         help="dimensions for news")
-    parser.add_argument('--readout_dim', type=int, default=128,
+    parser.add_argument('--readout_dim', type=int, default=64,
                         help="dimensions for graph readout")
     parser.add_argument('--num_heads', type=int, default=1,
                         help="num attention heads for each GAT layer")

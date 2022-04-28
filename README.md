@@ -53,7 +53,7 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --e
                     help="feature type: [profile, spacy, bert, content],`content` means 300-d word2vec+10-d profile"
 ```
 
-For hyper-param tuning, use `hyper_param_tuning()` in [fake_news_detection.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_detection.py) and modify the `yaml` config file. Example of the config file can be found [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/pooling2.yml).
+For hyper-param tuning, use `hyper_param_tuning()` in [fake_news_detection.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_detection.py) and modify the `yaml` config file. Example of the config file can be found [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/demo.yml).
 
 <b>Some important files</b>
 - [fake_news_detection.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_detection.py): Main file for fake news detection
@@ -93,20 +93,6 @@ Train and val losses on <b>Gossipcop</b> dataset
 <img src="plots/res_table.png" width="350">
 
 <b>Analyse Results:</b>
-
-If only GAT is used, the results are low.
-
-gossipcop (only GATs)
-+ test_acc: 52.58755880815473;
-+ test_f1: 10.109018830525272
-
-politifact (only GATs)
-+ test_acc: 48.86877828054298
-+ test_f1: 0.0
-
-BERT/Word2Vec alone on text embedding of the news get higher baseline (reported in the resulting table).
-
-
 More details of the results (e.g., train and val losses, accuracy by number of attention heads) can be found at this [Jupyter notebooks](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/notebooks/analyse_results.ipynb)
 
 ## Team Members
