@@ -1,6 +1,6 @@
 # A GNN-based model for Fake News Detection
 
-<img src="plots/task.png" width="300">
+<img src="plots/task.png" width="450">
 
 # Setup
 
@@ -52,7 +52,7 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300
                     help="feature type: [profile, spacy, bert, content],`content` means 300-d word2vec+10-d profile"
 ```
 
-For hyper-param tuning, use `yaml` config file (for example, [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/num_heads.yml))
+For hyper-param tuning, use `yaml` config file (for example, [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/pooling2.yml))
 
 # Datasets 
 Datasets from [UPFD (SIGIR'21)](https://arxiv.org/pdf/2104.12259.pdf) paper.
@@ -66,16 +66,13 @@ GossipCop provides rating scores on the scale of 0 to 10 to classify a news stor
 
 <img src="plots/data_stats.png" width="350">
 
-<br>
-<br>
+
 <br>
 <img src="plots/a_graph_in_Gossipcop_dataset.png" width="300" >
 <br>
-<br>
-<br>
 
 # Model
-<img src="plots/architecture.png" width="400" >
+<img src="plots/architecture.png" width="550" >
 <br>
 <br>
 
