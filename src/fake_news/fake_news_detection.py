@@ -31,8 +31,10 @@ def train_model(config: Dict, logger: ExperimentLog):
 
     device = get_device(f"cuda:{config.cuda}")
     print(f"using {device}...")
-    model = FakeNewsNet(config.gat_layer, config.pooling, train_data.num_features, config.hid_dims, 1, config.num_heads,
-                        config.readout_dim, config.news_dim, config.dropout).to(device)
+    model = FakeNewsNet(config.gat_layer, config.pooling, train_data.num_features,
+                        config.hid_dims, 1, config.num_heads,
+                        config.readout_dim, config.news_dim, config.dropout,
+                        config.only_gat).to(device)
 
     count_parameters(model)
 
@@ -116,5 +118,7 @@ def hyper_param_tuning():
 
 
 if __name__ == '__main__':
-    config = vars(parse_argparse_config())
-    run_experiment(config)
+    # config = vars(parse_argparse_config())
+    # run_experiment(config)
+
+    hyper_param_tuning()

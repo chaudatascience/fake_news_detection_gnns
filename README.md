@@ -93,6 +93,20 @@ Train and val losses on <b>Gossipcop</b> dataset
 <img src="plots/res_table.png" width="350">
 
 <b>Analyse Results:</b>
+
+If only GAT is used, the results are low.
+
+gossipcop (only GATs)
++ test_acc: 52.58755880815473;
++ test_f1: 10.109018830525272
+
+politifact (only GATs)
++ test_acc: 48.86877828054298
++ test_f1: 0.0
+
+BERT/Word2Vec alone on text embedding of the news get higher baseline (reported in the resulting table).
+
+
 More details of the results (e.g., train and val losses, accuracy by number of attention heads) can be found at this [Jupyter notebooks](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/notebooks/analyse_results.ipynb)
 
 ## Team Members
