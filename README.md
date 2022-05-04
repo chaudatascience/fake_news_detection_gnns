@@ -18,7 +18,7 @@ sh run.sh
 ```
 
 
-### To run from command line
+### To run the model with different parameters
 ```
 python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --early_stopping 50 --batch 128
 ```
@@ -60,7 +60,7 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --e
                         help="Only use GAT (testing purpose)"
 ```
 
-For hyper-param tuning, use `--hyper_param` and `--config_file` to point to the `yaml` config file. 
+For hyper-param tuning, use `--hyper_param` flag, and use `--config_file` to point to the `yaml` config file. 
 Example of the config file can be found [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/demo.yml).
 ```
 python -m src.fake_news.fake_news_detection --hyper_param --config_file demo
