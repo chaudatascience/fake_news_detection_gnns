@@ -101,14 +101,10 @@ def run_experiment(config):
     train_model(config, logger)
 
 
-def hyper_param_tuning():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, default="demo",
-                        help="name of the yaml config file (in `configs` folder)")
-    args = parser.parse_args()
+def hyper_param_tuning(yaml_cfg_file: str):
 
-    print(args.config)
-    with open(f"configs/{args.config}.yml", "r") as f:
+    print(f"config file: {yaml_cfg_file}")
+    with open(f"configs/{yaml_cfg_file}.yml", "r") as f:
         main_config = yaml.safe_load(f)
 
     config_list = get_hyperpram_grid_configs(main_config)
@@ -118,8 +114,20 @@ def hyper_param_tuning():
 
 
 if __name__ == '__main__':
-    config = vars(parse_argparse_config())
-    run_experiment(config)
 
-    ## for hyper-param tuning
-    # hyper_param_tuning()
+    ## for hyper-param tuning (get config from yaml files)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--hyper_param', action="store_true",
+                        help="use this flag for hyper-param tuning")
+    parser.add_argument('--config_file', type=str, default="demo",
+                        help="name of the yaml config file (in `configs` folder)")
+    args = parser.parse_args()
+
+    if args.hyper_param:
+        hyper_param_tuning(args.config_file)
+    else:
+        ## run 1 experiment, get config from cmd
+        print("running ...")
+        config = vars(parse_argparse_config())
+        run_experiment(config)
+

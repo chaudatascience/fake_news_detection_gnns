@@ -12,14 +12,19 @@ conda activate fake_news
 ```
 
 # Usage
-To reproduce the results: 
+### To reproduce the results on the 2 datasets
+```
+sh run.sh
+```
 
+
+### To run from command line
 ```
 python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --early_stopping 50 --batch 128
 ```
-<br>
 
-**Other arguments**
+
+**Arguments**
 ```
 '--dataset', type=str, default="gossipcop",
                     help="name of the dataset, either 'gossipcop' or 'politifact' "
@@ -55,12 +60,19 @@ python -m src.fake_news.fake_news_detection --dataset gossipcop --epochs 300 --e
                         help="Only use GAT (testing purpose)"
 ```
 
-For hyper-param tuning, use `hyper_param_tuning()` in [fake_news_detection.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_detection.py) and modify the `yaml` config file. Example of the config file can be found [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/demo.yml).
+For hyper-param tuning, use `--hyper_param` and `--config_file` to point to the `yaml` config file. 
+Example of the config file can be found [here](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/configs/demo.yml).
+```
+python -m src.fake_news.fake_news_detection --hyper_param --config_file demo
+```
+
+
 
 <b>Some important files</b>
 - [fake_news_detection.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_detection.py): Main file for fake news detection
-- [fake_news_net.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_net.py): Fake News Net
+- [fake_news_net.py](https://github.com/chaudatascience/fake_news_detection_gnns/blob/main/src/fake_news/fake_news_net.py): Our implementation for Fake News Net
 - [GAT package](https://github.com/chaudatascience/fake_news_detection_gnns/tree/main/src/GAT): Our implementation of Graph Attention Networks (GATs)
+- [GAT package v2](https://github.com/chaudatascience/fake_news_detection_gnns/tree/main/src/GAT_Sheng): Another version of our implementation of GATs.
 
 # Datasets 
 Datasets from [UPFD (SIGIR'21)](https://arxiv.org/pdf/2104.12259.pdf) paper.

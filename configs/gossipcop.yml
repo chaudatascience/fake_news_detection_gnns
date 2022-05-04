@@ -1,5 +1,5 @@
 ## Use [] for hyper-parameter tuning
-dataset:  ['gossipcop']
+dataset: ['gossipcop']
 early_stopping: 50
 cuda: 'auto'
 batch: 128
@@ -9,10 +9,10 @@ epochs: 300
 dropout: 0
 pooling:  'global_max_pool'
 gat_layer: 'GATConv'
-hid_dims: [ [32], [32, 32] ] ## tuning 2 setups for hid_dims
+hid_dims: [ [32] ]
 readout_dim: 64
 news_dim: 64
-num_heads: [1, 2]  ## tuning 2 setups for num_heads
+num_heads: 1
 save_name: None
 feature: 'content'
 only_gat: False
