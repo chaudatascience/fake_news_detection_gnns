@@ -129,3 +129,11 @@ More details of the results (e.g., train and val losses, accuracy by number of a
 ## Acknowledgement
 
 To compare our own GAT implementation with the original GAT implementation we borrow implentation from https://github.com/PetarV-/GAT and https://github.com/pyg-team/pytorch_geometric/
+
+* gat.py 
+
+* gat_net.py
+
+* cora.py are from https://github.com/PetarV-/GAT
+
+
