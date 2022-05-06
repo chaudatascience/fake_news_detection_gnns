@@ -13,7 +13,7 @@ import pandas as pd
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='gossipcop',
                     choices=['politifact', 'gossipcop'])
-parser.add_argument('--feature', type=str, default='bert',
+parser.add_argument('--feature', type=str, default='spacy',
                     choices=['profile', 'spacy', 'bert', 'content'])
 parser.add_argument('--model', type=str, default='GAT',
                     choices=['GCN', 'GAT', 'SAGE'])
@@ -127,4 +127,4 @@ for epoch in range(1, 201):
     print(f'Epoch: {epoch:03d}, train_acc: {train_acc:.4f}, train_loss: {loss:.4f},val_acc: {val_acc:.4f}, val_loss: {val_loss:.4f}, test_acc: {test_acc:.4f}, test_loss: {test_loss:.4f}'
           f'test_acc: {test_acc:.4f}')
 
-record_metrics.to_csv('gossipcop_bert_GAT_results.csv', index=False)
+record_metrics.to_csv('gossipcop_spacy_GAT_results.csv', index=False)
