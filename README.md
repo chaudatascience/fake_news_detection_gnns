@@ -128,12 +128,9 @@ More details of the results (e.g., train and val losses, accuracy by number of a
 
 ## Acknowledgement
 
-To compare our own GAT implementation with the original GAT implementation we borrow implentation from https://github.com/PetarV-/GAT and https://github.com/pyg-team/pytorch_geometric/
+To compare our own GAT implementation with the original GAT implementation, and compare our fake news net with UPFD, we borrow implentation from https://github.com/PetarV-/GAT and https://github.com/pyg-team/pytorch_geometric/
 
-* gat_utils.py 
-
-* gat_net.py
 
 * paper_gat.py are from https://github.com/PetarV-/GAT
 
-
+* upfd.py: UPFD implementation
